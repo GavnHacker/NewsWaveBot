@@ -1,8 +1,9 @@
 from pymongo import MongoClient
 from aiogram import Bot, Dispatcher, types
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
+import os
 
-TOKEN = '5782736107:AAHFGKn0NIChorceHcv1a_UdXK6Rd-WwOYI'
+TOKEN = os.getenv('TELEGRAM_BOT_TOKEN')
 
 bot = Bot(TOKEN, parse_mode=types.ParseMode.HTML)
 dp = Dispatcher(bot)
