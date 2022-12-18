@@ -77,7 +77,5 @@ def check_update():
     return fresh_news
 
 
-
-
 if __name__ == "__main__":
-    check_update()
+    print(check_update())

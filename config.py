@@ -1,11 +1,23 @@
-token = '5854320385:AAEVmAk-rh4fsg518_kR_G6WgDsq9SG6fpU'
-ADMIN = 553630663  # cюда писать userID владельца
-# love_id = '553630663'
-sanya_id = 435548553
-gg = 553630663
-# aloha = 5628240117
-love_id = 767240722
-tolya = 758981632
-users = [ADMIN]
+from pymongo import MongoClient
+from aiogram import Bot, Dispatcher, types
+from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
+
+TOKEN = '5782736107:AAHFGKn0NIChorceHcv1a_UdXK6Rd-WwOYI'
+
+bot = Bot(TOKEN, parse_mode=types.ParseMode.HTML)
+dp = Dispatcher(bot)
+
+# Клавиатура
+kbn1 = KeyboardButton('👀Усі новини👀')
+kbn2 = KeyboardButton('👀Останні новини👀')
+kbn3 = KeyboardButton('👀Останні 5 новин👀')
+kbn4 = KeyboardButton('👀Підписатися на розсилку👀')
+kbn5 = KeyboardButton('👀Відписатися👀')
+kbn = ReplyKeyboardMarkup(resize_keyboard=True).add(kbn1, kbn2, kbn3, kbn4, kbn5)
+
+# Подключаем СУБД
+cluster = MongoClient("mongodb+srv://gavnohacker:123654@cluster0.jxqgwjg.mongodb.net/Users?retryWrites=true&w=majority")
+db = cluster["Users"]
+collection = db["users"]
 
 
