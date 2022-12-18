@@ -9,6 +9,15 @@ from aiogram.utils.markdown import hbold, hlink
 from misc import *
 from parser import check_update
 from datetime import datetime
+import sqlite3
+
+con = sqlite3.connect('ids.db')
+cur = con.cursor()
+
+
+def db_table_val(user_id: int, user_name: str, username: str):
+	cur.execute('INSERT INTO users (user_id, user_name, username) VALUES (?, ?, ?, ?)', (user_id, user_name, username))
+	con.commit()
 
 
 async def on_startup(_):
@@ -70,7 +79,6 @@ async def get_fresh_news(message: types.Message):
 
     else:
         await message.answer("Пока нет свежих новостей")
-
 
 
 @dp.message_handler(Text(equals='👽Санёк👽'))
@@ -135,30 +143,29 @@ async def help_command(message: types.Message):
 #     await message.delete()
 
 
-# @dp.message_handler(Text(equals='💜Пожелать спокойной ночи пупсику💜'))
-# async def love_command(message: types.Message):
-#     await bot.send_message(love_id, text='Люблю тебя, пирожочек мой💜💜💜\nСладких снов💜💜💜')
-#     await bot.send_sticker(love_id, sticker='CAACAgIAAxkBAAEGr9VjjRTFwV5S4XpE5FNHiLcccw1ZZgACbggAAoHIgUpu1N4xEpjtwisE')
-#     await message.answer(text='Любовное послание отправлено)')
-#     await message.delete()
+@dp.message_handler(Text(equals='👀Подписаться на рассылку👀'))
+async def subscription(message: types.Message):
+    uid = message.from_user.id
+    user_id.append(uid)
 
 
-async def news_every_minute():
+
+
+async def news_every_minute(wait):
     while True:
         fresh_news = check_update()
         if len(fresh_news) >= 1:
             for k, v in sorted(fresh_news.items()):
                 news = f'{hlink(v["title"], v["link"])}'
-
-                await bot.send_message(ADMIN, news, disable_notification=True)
-
+                for id in users:
+                    await bot.send_message(id, news, disable_notification=True)
+                print(news)
+        fresh_news.clear()
         print(datetime.now())
-        await asyncio.sleep(20)
+        await asyncio.sleep(wait)
 
 
 if __name__ == "__main__":
-    # asyncio.run(news_every_minute())
-    executor.start_polling(dp, on_startup=on_startup)
-
-
-
+    loop = asyncio.get_event_loop()
+    loop.create_task(news_every_minute(20))
+    executor.start_polling(dp, on_startup=on_startup, skip_updates=True)
